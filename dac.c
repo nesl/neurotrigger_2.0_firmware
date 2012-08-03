@@ -27,8 +27,17 @@ void dac_output0(uint8_t config){
 //#############################################################
 
 //DAC's are 12 bit valued -- numbers outside this range will overflow silently
-void dac_out0(uint16_t value){DACB.CH0DATA = value;}
-void dac_out1(uint16_t value){DACB.CH1DATA = value;}
+uint16_t dac_out0(uint16_t value){
+	DACB.CH0DATA = value; 
+	return DACB.CH0DATA;
+}	
+uint16_t dac_out1(uint16_t value){
+	DACB.CH1DATA = value;
+	return DACB.CH1DATA;
+}	
+
+uint16_t dac_read0() {return DACB.CH0DATA;}
+uint16_t dac_read1() {return DACB.CH1DATA;}
 
 void service_dac(){	
 }

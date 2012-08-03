@@ -40,15 +40,13 @@ void pwm_enable(){
 		TCE0.CTRLE = 0x00; //Leave the counter in 16 (rather than 8) bit mode
 
 	//DIGITAL-TO-ANALOG CONVERTER (DAC)
-		//PORTB.DAC0 -- Vbackground; disable so GPIO can take over and set to ground (prevents us from having to disturb the current DAC output value so we can easily restore it later if need be)
-		dac_output0(DISABLE);
-		//Output Low on PB2
-		PORTB.OUTCLR = B8(00000100);
-		PORTB.DIRSET = B8(00000100);
-
+		//PORTB.DAC0 -- Vbackground; value set by calibration routine;
+		dac_output0(ENABLE);
+		dac_out1(2000); //about mid scale
+		
 	//ANALOG COMPARATOR
-		ACA.AC0MUXCTRL = B8(00000111); //Pos. input = PA0; Neg. Input = VCC Scaler; 
-		ACA.CTRLB = 20; //VCC Scaler = VCC/2 = 1.65V
+		ACA.AC0MUXCTRL = B8(00000011); //Pos. input = PA0; Neg. Input = PA5 (DAC1); 
+		//ACA.CTRLB = 20; //VCC Scaler = VCC/2 = 1.65V
 		ac_output(DISABLE); //Turn off PA7 output pin (we'll use it directly to control the external peripheral)
 		ACA.AC0CTRL = B8(00111101); //enable AC0; 50mV hysterysis; high priority interrupt on edge toggle; high-speed mode
 		PORTA.OUTCLR = B8(10000000); //PA7 output low
@@ -64,7 +62,7 @@ void pwm_disable(){
 
 	//DIGITAL-TO-ANALOG CONVERTER (DAC)
 		//PORTB.DAC0 -- Vbackground; Enable to allow DAC operation
-		dac_output0(ENABLE); //Overrides PB2 GPIO function
+		dac_output0(DISABLE);
 
 	//ANALOG COMPARATOR
 		init_ac();
@@ -77,13 +75,15 @@ boolean pwm_mode(){
 
 //ANALOG COMPARATOR (AC0) OUTPUT TOGGLE INTERRUPT
 SIGNAL(ACA_AC0_vect){
-	led_toggle(LED_MID);
+	//led_toggle(LED_MID);
 	if ((ACA.STATUS & B8(00010000)) > 0){
+		led_on(LED_MID);
 		//Detected: RISING edge
 		if (STATE_Pwm_Polarity == POSITIVE_PULSE) edge_start();
 		if (STATE_Pwm_Polarity == NEGATIVE_PULSE) edge_stop();
 	}
 	else {
+		led_off(LED_MID);
 		//Detected: FALLING edge
 		if (STATE_Pwm_Polarity == POSITIVE_PULSE) edge_stop();
 		if (STATE_Pwm_Polarity == NEGATIVE_PULSE) edge_start();
@@ -100,6 +100,8 @@ void inline edge_stop(){
 	if ((TCE0.INTFLAGS & _BV(0)) == 0x00){
 		uart_enqueue(13);
 		uart_enqueue(10);
+		uart_enqueue('-');
+		uart_enqueue('-');
 		uart_enq_HEX16(width);
 		pwm_decode(width);
 	}
@@ -132,6 +134,14 @@ boolean between(uint16_t var, uint16_t low, uint16_t high){
 	//0x7000 = Cs.wav
 	//0x9000 = Ds.wav
 void pwm_decode(uint16_t width){
+	
+	uart_send_byte(&udata,'-');
+	uart_send_byte(&udata,'-');
+	uart_send_byte(&udata,'-');
+	uart_send_HEX16(&udata, width);
+	uart_send_byte(&udata,'-');
+	uart_send_byte(&udata, 13);
+	
 	static uint8_t last_code = 0;
 
 	if (between(width,0x1000,0x2000) == true){
@@ -154,7 +164,8 @@ void pwm_decode(uint16_t width){
 	}
 	if (between(width,0x4000,0x5000) == true){
 		//Found C code!
-		if (last_code != 3) pwm_pulse(); //C = Pulse for first C code encountered
+		//if (last_code != 3) pwm_pulse(); //C = Pulse for first C code encountered
+		pwm_pulse();
 		last_code = 3; //Note that we've seen this code (A=1, B=2, etc)
 		uart_enqueue(' ');
 		uart_enqueue('<');
@@ -173,11 +184,11 @@ void pwm_decode(uint16_t width){
 }
 
 //Code to initiate an output pulse. Output pulses are only initiated if there is not a current pulse in progress
-void pwm_pulse(void){
+void pwm_pulse(void){	
 	if (STATE_Pwm != PWM_OUTPUT_PULSE){
 		STATE_Pwm = PWM_OUTPUT_PULSE; //Update state
 		STATE_Pwm_Counter = PWM_PULSE_DURATION; //Load the counter
-	}
+	}	
 }
 
 //Mainline Loop PWM Service Routine -- use to manage output pulse

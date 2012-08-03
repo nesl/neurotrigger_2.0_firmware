@@ -92,9 +92,16 @@ int main(void){
 			service_button();
 			if (STATE_Button == BUTTON_PUSHED){
 				if (pwm_mode() == false){
-					STATE_Autolevel = AUTOLEVEL_BACKGROUND;
+					//DIODE mode
+					STATE_Autolevel = AUTOLEVEL_DIODE;
 					led_on(LED_MID);
 				}
+				else{
+					//AUDIO mode
+					STATE_Autolevel = AUTOLEVEL_AUDIO;
+					dac_output0(ENABLE);
+					led_on(LED_MID);
+				}					
 			}
 
 			//PERFORM AUTO-LEVELING!
@@ -102,12 +109,38 @@ int main(void){
 				//dac is 806uV resolution
 				//ergo ADC -> DAC values must be adjusted by: (x*0.625 = x*5/8)
 			switch(STATE_Autolevel){
-			case AUTOLEVEL_BACKGROUND:
+			case AUTOLEVEL_DIODE:
 				//Determine background level
 					adc_ch1_stats(1024);
 				//Set background level
 					dac_out0((adc_avg*5)/8 + 170); //background (x*0.625 = x*5/8)
 				STATE_Autolevel = AUTOLEVEL_WAIT;
+				break;
+			case AUTOLEVEL_AUDIO:
+				//We can't observe the signal directly so we need to hunt for the presumed DC level by...
+				//Decrease DAC until signal is saturated high		
+				adc_avg = 0;						
+				while(adc_avg < AUDIO_THRESHOLD_TOP){
+					adc_ch1_stats(32);
+					if(adc_avg <= AUDIO_THRESHOLD_TOP) {
+						if(dac_read0() == 0) adc_avg = AUDIO_THRESHOLD_TOP; //safety condition -- can't reach loop exit condition, so lets just exit and hope for the best!
+						if(dac_read0() >= 100) {dac_out0(dac_read0()-100);}
+						else {dac_out0(0);}	
+					}						
+				}				
+				//Increase DAC until signal is saturated low
+				adc_avg = 0xFFFF;
+				while(adc_avg > AUDIO_THRESHOLD_BOTTOM){
+					adc_ch1_stats(32);
+					if(adc_avg >= AUDIO_THRESHOLD_BOTTOM) {
+						if(dac_read0() == 0x0FFF) adc_avg = AUDIO_THRESHOLD_BOTTOM; //safety condition -- can't reach loop exit condition, so lets just exit and hope for the best!
+						if(dac_read0() < 0x0FFF) {dac_out0(dac_read0()+100);}
+						else {dac_out0(0x0FFF);}
+					}
+				}		
+				//Now add some margin to the level for stability
+				dac_out0(dac_read0()+600);
+				STATE_Autolevel = AUTOLEVEL_DONE;
 				break;
 			case AUTOLEVEL_WAIT:
 				STATE_Autolevel = AUTOLEVEL_WAIT2;
@@ -123,16 +156,16 @@ int main(void){
 					uart_send_byte(&uctrl, '.');
 					uart_send_HEX16(&uctrl, adc_max);
 					uart_send_byte(&uctrl, ' ');
-				//Done!
-					led_off(LED_MID);
+				//Done! -- just fall through					
+			case AUTOLEVEL_DONE:
+				led_off(LED_MID);
 				STATE_Autolevel = AUTOLEVEL_IDLE;
-				break;
+				//fall through to next case (no break)
 			case AUTOLEVEL_IDLE:
 			default:		
 				break;
 			}
-
-
+					
 			while((TCC0.INTFLAGS & _BV(0)) != 0x01); //Wait for the loop time to expire
 			TCC0.INTFLAGS = 0x01; //Clear the interrupt flag
 		}//while
