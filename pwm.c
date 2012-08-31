@@ -25,6 +25,8 @@ extern uint8_t STATE_Autolevel;
 uint8_t STATE_Pwm_Counter = 0;
 uint8_t STATE_Pwm = PWM_OUTPUT_LOW;
 uint8_t STATE_Pwm_Polarity = POSITIVE_PULSE;
+uint8_t STATE_Pwm_Decode = LOOK_FOR_START;
+uint8_t STATE_Pwm_Timeout = TIMEOUT;
 
 //Initialize the PWM module
 void init_pwm(){
@@ -142,45 +144,40 @@ void pwm_decode(uint16_t width){
 	uart_send_byte(&udata,'-');
 	uart_send_byte(&udata, 13);
 	
-	static uint8_t last_code = 0;
-
 	if (between(width,0x1000,0x2000) == true){
 		//Found A code!
-		STATE_Pwm = PWM_OUTPUT_HIGH; //A = Turn On Constantly
-		last_code = 1; //Note that we've seen this code (A=1, B=2, etc)
-		uart_enqueue(' ');
-		uart_enqueue('<');
-		uart_enqueue('-');
-		uart_enqueue('A');
+		pwm_state('A');		
 	}
 	if (between(width,0x2000,0x3000) == true){
 		//Found B code!
-		STATE_Pwm = PWM_OUTPUT_LOW; //B = Turn Off Constantly
-		last_code = 2; //Note that we've seen this code (A=1, B=2, etc)
-		uart_enqueue(' ');
-		uart_enqueue('<');
-		uart_enqueue('-');
-		uart_enqueue('B');
+		pwm_state('B');
 	}
 	if (between(width,0x4000,0x5000) == true){
 		//Found C code!
-		//if (last_code != 3) pwm_pulse(); //C = Pulse for first C code encountered
-		pwm_pulse();
-		last_code = 3; //Note that we've seen this code (A=1, B=2, etc)
-		uart_enqueue(' ');
-		uart_enqueue('<');
-		uart_enqueue('-');
-		uart_enqueue('C');
+		pwm_state('C');
 	}
 	if (between(width,0x7000,0x8000) == true){
 		//Found D code!
-		if (last_code != 4) pwm_pulse(); //D = Pulse for first D code encountered
-		last_code = 4; //Note that we've seen this code (A=1, B=2, etc)
-		uart_enqueue(' ');
-		uart_enqueue('<');
-		uart_enqueue('-');
-		uart_enqueue('D');
+		pwm_state('D');
 	}
+}
+
+void pwm_out_high(void){
+	STATE_Pwm = PWM_OUTPUT_HIGH; //A = Turn On Constantly
+	uart_enqueue(' ');
+	uart_enqueue('<');
+	uart_enqueue('-');
+	uart_enqueue('O');
+	uart_enqueue('N');
+}
+void pwm_out_low(void){
+	STATE_Pwm = PWM_OUTPUT_LOW; //B = Turn Off Constantly
+	uart_enqueue(' ');
+	uart_enqueue('<');
+	uart_enqueue('-');
+	uart_enqueue('O');
+	uart_enqueue('F');
+	uart_enqueue('F');
 }
 
 //Code to initiate an output pulse. Output pulses are only initiated if there is not a current pulse in progress
@@ -189,12 +186,100 @@ void pwm_pulse(void){
 		STATE_Pwm = PWM_OUTPUT_PULSE; //Update state
 		STATE_Pwm_Counter = PWM_PULSE_DURATION; //Load the counter
 	}	
+	uart_enqueue(' ');
+	uart_enqueue('<');
+	uart_enqueue('-');
+	uart_enqueue('P');
+	uart_enqueue('U');
+	uart_enqueue('L');
+	uart_enqueue('S');
+	uart_enqueue('E');
 }
+
+void pwm_reserved(void){
+	uart_enqueue(' ');
+	uart_enqueue('<');
+	uart_enqueue('-');
+	uart_enqueue('W');
+	uart_enqueue('T');
+	uart_enqueue('F');
+	uart_enqueue('!');
+}
+
+void pwm_change_state(uint8_t new_state){
+	STATE_Pwm_Decode = new_state;
+	STATE_Pwm_Timeout = TIMEOUT;		
+}
+
+//State machine to decode more advanced command format
+void pwm_state(uint8_t next_code){
+	switch (STATE_Pwm_Decode){
+		case LOOK_FOR_START:
+			if (next_code == 'A') pwm_change_state(SAW_A);
+			break;
+		case SAW_A:
+			switch (next_code){
+				case 'A':
+				break;
+				case 'B':
+				pwm_change_state(SAW_AB); break;
+				case 'C':
+				pwm_change_state(SAW_AC); break;
+				default:
+				pwm_change_state(LOOK_FOR_START);
+			}		
+			break;	
+		case SAW_AB:
+			switch (next_code){
+				case 'B':
+					pwm_change_state(SAW_ABB); break;
+				case 'C':
+					pwm_change_state(SAW_ABC); break;
+				default:
+					pwm_change_state(LOOK_FOR_START);
+			}
+			break;
+		case SAW_AC:
+			switch (next_code){
+				case 'B':
+					pwm_change_state(SAW_ACB); break;
+				case 'C':
+					pwm_change_state(SAW_ACC); break;
+				default:
+					pwm_change_state(LOOK_FOR_START);
+			}
+			break;
+		case SAW_ABB:
+			if (STATE_Pwm_Decode == 'D') pwm_out_high();
+			STATE_Pwm_Decode = LOOK_FOR_START;				
+			break;
+		case SAW_ABC:
+			if (STATE_Pwm_Decode == 'D') pwm_out_low();
+			STATE_Pwm_Decode = LOOK_FOR_START;
+			break;		
+		case SAW_ACB:
+			if (STATE_Pwm_Decode == 'D') pwm_pulse();
+			STATE_Pwm_Decode = LOOK_FOR_START;
+			break;
+		case SAW_ACC:
+			if (STATE_Pwm_Decode == 'D') pwm_reserved();
+			STATE_Pwm_Decode = LOOK_FOR_START;
+			break;
+		default:
+			STATE_Pwm_Decode = LOOK_FOR_START;
+	}	
+}
+
 
 //Mainline Loop PWM Service Routine -- use to manage output pulse
 //...and trigger states
 //---must run only once per 2ms looptime
 void service_pwm(void){
+	//Process Decoding Timeout
+	if (STATE_Pwm_Timeout > 0) STATE_Pwm_Timeout--;
+	if (STATE_Pwm_Timeout == 0) STATE_Pwm_Decode = LOOK_FOR_START;
+	
+	//Process component pulse durations
 	switch(STATE_Pwm){
 	case PWM_OUTPUT_HIGH:
 		PORTA.OUTSET = B8(10000000); //PA7 output high

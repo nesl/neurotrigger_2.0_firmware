@@ -144,7 +144,7 @@ LOAD c:/program files/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/av
 .rela.plt
  *(.rela.plt)
 
-.text           0x00000000     0x17a8
+.text           0x00000000     0x18d6
  *(.vectors)
  .vectors       0x00000000      0x178 c:/program files/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega2/crtx16a4.o
                 0x00000000                __vector_default
@@ -314,7 +314,7 @@ LOAD c:/program files/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/av
                 0x00000428                service_dac
  .text          0x0000042a      0x318 Neurotrigger2.o
                 0x0000042a                main
- .text          0x00000742      0x346 pwm.o
+ .text          0x00000742      0x474 pwm.o
                 0x00000742                init_pwm
                 0x00000744                pwm_enable
                 0x0000078c                pwm_disable
@@ -323,67 +323,72 @@ LOAD c:/program files/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/av
                 0x000007aa                pwm_timer_reset
                 0x000007b8                edge_start
                 0x000007be                between
-                0x000007d6                pwm_pulse
-                0x000007ec                pwm_decode
-                0x00000910                edge_stop
-                0x0000094c                __vector_68
-                0x00000a3e                service_pwm
- .text          0x00000a88      0x7b6 uart.o
-                0x00000a88                init_uart
-                0x00000b44                uart_send_byte
-                0x00000b50                uart_send_BIN4
-                0x00000dba                uart_send_BIN8
-                0x00000de8                uart_send_HEX4
-                0x00000eb4                uart_send_HEX8
-                0x00000ed8                uart_send_HEX16b
-                0x00000ef6                uart_send_HEX16
-                0x00000f16                uart_enq_BIN4
-                0x00001114                uart_enq_BIN8
-                0x00001134                uart_enq_HEX4
-                0x00001200                uart_enq_HEX8
-                0x00001218                uart_enq_HEX16b
-                0x0000122a                uart_enq_HEX16
- .text          0x0000123e      0x352 uart_buffer.o
-                0x0000123e                uart_txbuffer_enable
-                0x0000124e                uart_txbuffer_disable
-                0x0000125e                uart_transmit
-                0x00001302                __vector_59
-                0x000013e8                init_uart_obuffer
-                0x000013f2                init_uart_buffer
-                0x00001400                uart_count
-                0x00001426                uart_enqueue
-                0x000014ee                uart_dequeue
-                0x00001514                init_uart_ibuffer
-                0x0000151e                uart_icount
-                0x00001544                uart_ienqueue
-                0x0000156a                uart_idequeue
- .text          0x00001590      0x1d0 ui.o
-                0x00001590                init_ui
-                0x000015f2                led_dim
-                0x00001614                led_off
-                0x0000161c                led_on
-                0x00001624                led_toggle
-                0x00001646                service_leds
-                0x00001648                __vector_2
-                0x0000168c                service_button
-                0x0000168e                sw_on
-                0x000016d0                service_switches
- .text          0x00001760        0x0 c:/program files/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega2\libgcc.a(_udivmodsi4.o)
- .text          0x00001760        0x0 c:/program files/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega2\libgcc.a(_exit.o)
- .text          0x00001760        0x0 c:/program files/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega2\libgcc.a(_copy_data.o)
- .text          0x00001760        0x0 c:/program files/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega2\libgcc.a(_clear_bss.o)
-                0x00001760                . = ALIGN (0x2)
+                0x000007d6                pwm_out_high
+                0x000007fc                pwm_out_low
+                0x00000828                pwm_pulse
+                0x0000086e                pwm_reserved
+                0x0000089a                pwm_change_state
+                0x000008a6                pwm_state
+                0x0000097e                pwm_decode
+                0x00000a26                edge_stop
+                0x00000a62                __vector_68
+                0x00000b54                service_pwm
+ .text          0x00000bb6      0x7b6 uart.o
+                0x00000bb6                init_uart
+                0x00000c72                uart_send_byte
+                0x00000c7e                uart_send_BIN4
+                0x00000ee8                uart_send_BIN8
+                0x00000f16                uart_send_HEX4
+                0x00000fe2                uart_send_HEX8
+                0x00001006                uart_send_HEX16b
+                0x00001024                uart_send_HEX16
+                0x00001044                uart_enq_BIN4
+                0x00001242                uart_enq_BIN8
+                0x00001262                uart_enq_HEX4
+                0x0000132e                uart_enq_HEX8
+                0x00001346                uart_enq_HEX16b
+                0x00001358                uart_enq_HEX16
+ .text          0x0000136c      0x352 uart_buffer.o
+                0x0000136c                uart_txbuffer_enable
+                0x0000137c                uart_txbuffer_disable
+                0x0000138c                uart_transmit
+                0x00001430                __vector_59
+                0x00001516                init_uart_obuffer
+                0x00001520                init_uart_buffer
+                0x0000152e                uart_count
+                0x00001554                uart_enqueue
+                0x0000161c                uart_dequeue
+                0x00001642                init_uart_ibuffer
+                0x0000164c                uart_icount
+                0x00001672                uart_ienqueue
+                0x00001698                uart_idequeue
+ .text          0x000016be      0x1d0 ui.o
+                0x000016be                init_ui
+                0x00001720                led_dim
+                0x00001742                led_off
+                0x0000174a                led_on
+                0x00001752                led_toggle
+                0x00001774                service_leds
+                0x00001776                __vector_2
+                0x000017ba                service_button
+                0x000017bc                sw_on
+                0x000017fe                service_switches
+ .text          0x0000188e        0x0 c:/program files/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega2\libgcc.a(_udivmodsi4.o)
+ .text          0x0000188e        0x0 c:/program files/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega2\libgcc.a(_exit.o)
+ .text          0x0000188e        0x0 c:/program files/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega2\libgcc.a(_copy_data.o)
+ .text          0x0000188e        0x0 c:/program files/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega2\libgcc.a(_clear_bss.o)
+                0x0000188e                . = ALIGN (0x2)
  *(.text.*)
- .text.libgcc   0x00001760       0x44 c:/program files/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega2\libgcc.a(_udivmodsi4.o)
-                0x00001760                __udivmodsi4
- .text.libgcc   0x000017a4        0x0 c:/program files/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega2\libgcc.a(_exit.o)
- .text.libgcc   0x000017a4        0x0 c:/program files/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega2\libgcc.a(_copy_data.o)
- .text.libgcc   0x000017a4        0x0 c:/program files/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega2\libgcc.a(_clear_bss.o)
-                0x000017a4                . = ALIGN (0x2)
+ .text.libgcc   0x0000188e       0x44 c:/program files/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega2\libgcc.a(_udivmodsi4.o)
+                0x0000188e                __udivmodsi4
+ .text.libgcc   0x000018d2        0x0 c:/program files/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega2\libgcc.a(_exit.o)
+ .text.libgcc   0x000018d2        0x0 c:/program files/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega2\libgcc.a(_copy_data.o)
+ .text.libgcc   0x000018d2        0x0 c:/program files/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega2\libgcc.a(_clear_bss.o)
+                0x000018d2                . = ALIGN (0x2)
  *(.fini9)
- .fini9         0x000017a4        0x0 c:/program files/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega2\libgcc.a(_exit.o)
-                0x000017a4                _exit
-                0x000017a4                exit
+ .fini9         0x000018d2        0x0 c:/program files/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega2\libgcc.a(_exit.o)
+                0x000018d2                _exit
+                0x000018d2                exit
  *(.fini9)
  *(.fini8)
  *(.fini8)
@@ -402,11 +407,11 @@ LOAD c:/program files/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/av
  *(.fini1)
  *(.fini1)
  *(.fini0)
- .fini0         0x000017a4        0x4 c:/program files/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega2\libgcc.a(_exit.o)
+ .fini0         0x000018d2        0x4 c:/program files/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega2\libgcc.a(_exit.o)
  *(.fini0)
-                0x000017a8                _etext = .
+                0x000018d6                _etext = .
 
-.data           0x00802000        0x2 load address 0x000017a8
+.data           0x00802000        0x4 load address 0x000018d6
                 0x00802000                PROVIDE (__data_start, .)
  *(.data)
  .data          0x00802000        0x0 c:/program files/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega2/crtx16a4.o
@@ -414,69 +419,71 @@ LOAD c:/program files/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/av
  .data          0x00802000        0x0 adc.o
  .data          0x00802000        0x0 dac.o
  .data          0x00802000        0x0 Neurotrigger2.o
- .data          0x00802000        0x2 pwm.o
-                0x00802000                STATE_Pwm_Polarity
-                0x00802001                STATE_Pwm
- .data          0x00802002        0x0 uart.o
- .data          0x00802002        0x0 uart_buffer.o
- .data          0x00802002        0x0 ui.o
- .data          0x00802002        0x0 c:/program files/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega2\libgcc.a(_udivmodsi4.o)
- .data          0x00802002        0x0 c:/program files/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega2\libgcc.a(_exit.o)
- .data          0x00802002        0x0 c:/program files/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega2\libgcc.a(_copy_data.o)
- .data          0x00802002        0x0 c:/program files/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega2\libgcc.a(_clear_bss.o)
+ .data          0x00802000        0x4 pwm.o
+                0x00802000                STATE_Pwm_Timeout
+                0x00802001                STATE_Pwm_Decode
+                0x00802002                STATE_Pwm_Polarity
+                0x00802003                STATE_Pwm
+ .data          0x00802004        0x0 uart.o
+ .data          0x00802004        0x0 uart_buffer.o
+ .data          0x00802004        0x0 ui.o
+ .data          0x00802004        0x0 c:/program files/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega2\libgcc.a(_udivmodsi4.o)
+ .data          0x00802004        0x0 c:/program files/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega2\libgcc.a(_exit.o)
+ .data          0x00802004        0x0 c:/program files/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega2\libgcc.a(_copy_data.o)
+ .data          0x00802004        0x0 c:/program files/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega2\libgcc.a(_clear_bss.o)
  *(.data*)
  *(.rodata)
  *(.rodata*)
  *(.gnu.linkonce.d*)
-                0x00802002                . = ALIGN (0x2)
-                0x00802002                _edata = .
-                0x00802002                PROVIDE (__data_end, .)
+                0x00802004                . = ALIGN (0x2)
+                0x00802004                _edata = .
+                0x00802004                PROVIDE (__data_end, .)
 
-.bss            0x00802002      0x116
-                0x00802002                PROVIDE (__bss_start, .)
+.bss            0x00802004      0x115
+                0x00802004                PROVIDE (__bss_start, .)
  *(.bss)
- .bss           0x00802002        0x0 c:/program files/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega2/crtx16a4.o
- .bss           0x00802002        0x0 ac.o
- .bss           0x00802002        0x0 adc.o
- .bss           0x00802002        0x0 dac.o
- .bss           0x00802002        0x1 Neurotrigger2.o
-                0x00802002                STATE_Autolevel
- .bss           0x00802003        0x2 pwm.o
-                0x00802003                STATE_Pwm_Counter
- .bss           0x00802005        0x0 uart.o
- .bss           0x00802005        0x0 uart_buffer.o
- .bss           0x00802005        0x1 ui.o
- .bss           0x00802006        0x0 c:/program files/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega2\libgcc.a(_udivmodsi4.o)
- .bss           0x00802006        0x0 c:/program files/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega2\libgcc.a(_exit.o)
- .bss           0x00802006        0x0 c:/program files/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega2\libgcc.a(_copy_data.o)
- .bss           0x00802006        0x0 c:/program files/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega2\libgcc.a(_clear_bss.o)
+ .bss           0x00802004        0x0 c:/program files/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega2/crtx16a4.o
+ .bss           0x00802004        0x0 ac.o
+ .bss           0x00802004        0x0 adc.o
+ .bss           0x00802004        0x0 dac.o
+ .bss           0x00802004        0x1 Neurotrigger2.o
+                0x00802004                STATE_Autolevel
+ .bss           0x00802005        0x1 pwm.o
+                0x00802005                STATE_Pwm_Counter
+ .bss           0x00802006        0x0 uart.o
+ .bss           0x00802006        0x0 uart_buffer.o
+ .bss           0x00802006        0x1 ui.o
+ .bss           0x00802007        0x0 c:/program files/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega2\libgcc.a(_udivmodsi4.o)
+ .bss           0x00802007        0x0 c:/program files/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega2\libgcc.a(_exit.o)
+ .bss           0x00802007        0x0 c:/program files/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega2\libgcc.a(_copy_data.o)
+ .bss           0x00802007        0x0 c:/program files/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega2\libgcc.a(_clear_bss.o)
  *(.bss*)
  *(COMMON)
- COMMON         0x00802006        0x1 ac.o
-                0x00802006                STATE_Button
- COMMON         0x00802007        0x7 adc.o
-                0x00802007                adc_count
-                0x00802008                adc_avg
-                0x0080200a                adc_max
-                0x0080200c                adc_min
- COMMON         0x0080200e      0x10a uart_buffer.o
-                0x0080200e                uart_itail
-                0x0080200f                uart_ibuffer
-                0x00802019                uart_head
-                0x0080201a                uart_buffer
-                0x00802114                uart_ihead
-                0x00802115                uart_tail
-                0x00802116                port
-                0x00802118                PROVIDE (__bss_end, .)
-                0x000017a8                __data_load_start = LOADADDR (.data)
-                0x000017aa                __data_load_end = (__data_load_start + SIZEOF (.data))
+ COMMON         0x00802007        0x1 ac.o
+                0x00802007                STATE_Button
+ COMMON         0x00802008        0x7 adc.o
+                0x00802008                adc_count
+                0x00802009                adc_avg
+                0x0080200b                adc_max
+                0x0080200d                adc_min
+ COMMON         0x0080200f      0x10a uart_buffer.o
+                0x0080200f                uart_itail
+                0x00802010                uart_ibuffer
+                0x0080201a                uart_head
+                0x0080201b                uart_buffer
+                0x00802115                uart_ihead
+                0x00802116                uart_tail
+                0x00802117                port
+                0x00802119                PROVIDE (__bss_end, .)
+                0x000018d6                __data_load_start = LOADADDR (.data)
+                0x000018da                __data_load_end = (__data_load_start + SIZEOF (.data))
 
-.noinit         0x00802118        0x0
-                0x00802118                PROVIDE (__noinit_start, .)
+.noinit         0x00802119        0x0
+                0x00802119                PROVIDE (__noinit_start, .)
  *(.noinit*)
-                0x00802118                PROVIDE (__noinit_end, .)
-                0x00802118                _end = .
-                0x00802118                PROVIDE (__heap_start, .)
+                0x00802119                PROVIDE (__noinit_end, .)
+                0x00802119                _end = .
+                0x00802119                PROVIDE (__heap_start, .)
 
 .eeprom         0x00810000        0x0
  *(.eeprom*)
@@ -559,64 +566,64 @@ LOAD c:/program files/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/av
 .debug_pubnames
  *(.debug_pubnames)
 
-.debug_info     0x00000000     0x3cc0
+.debug_info     0x00000000     0x3d7f
  *(.debug_info)
  .debug_info    0x00000000      0x1b5 ac.o
  .debug_info    0x000001b5      0x61a adc.o
  .debug_info    0x000007cf      0x383 dac.o
  .debug_info    0x00000b52      0x9c1 Neurotrigger2.o
- .debug_info    0x00001513      0xb9f pwm.o
- .debug_info    0x000020b2      0x5a4 uart.o
- .debug_info    0x00002656      0x4c0 uart_buffer.o
- .debug_info    0x00002b16      0xe22 ui.o
- .debug_info    0x00003938       0xe2 c:/program files/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega2\libgcc.a(_udivmodsi4.o)
- .debug_info    0x00003a1a       0xe2 c:/program files/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega2\libgcc.a(_exit.o)
- .debug_info    0x00003afc       0xe2 c:/program files/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega2\libgcc.a(_copy_data.o)
- .debug_info    0x00003bde       0xe2 c:/program files/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega2\libgcc.a(_clear_bss.o)
+ .debug_info    0x00001513      0xc5e pwm.o
+ .debug_info    0x00002171      0x5a4 uart.o
+ .debug_info    0x00002715      0x4c0 uart_buffer.o
+ .debug_info    0x00002bd5      0xe22 ui.o
+ .debug_info    0x000039f7       0xe2 c:/program files/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega2\libgcc.a(_udivmodsi4.o)
+ .debug_info    0x00003ad9       0xe2 c:/program files/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega2\libgcc.a(_exit.o)
+ .debug_info    0x00003bbb       0xe2 c:/program files/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega2\libgcc.a(_copy_data.o)
+ .debug_info    0x00003c9d       0xe2 c:/program files/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega2\libgcc.a(_clear_bss.o)
  *(.gnu.linkonce.wi.*)
 
-.debug_abbrev   0x00000000      0xb5a
+.debug_abbrev   0x00000000      0xb60
  *(.debug_abbrev)
  .debug_abbrev  0x00000000       0xb3 ac.o
  .debug_abbrev  0x000000b3      0x14a adc.o
  .debug_abbrev  0x000001fd      0x118 dac.o
  .debug_abbrev  0x00000315      0x12d Neurotrigger2.o
- .debug_abbrev  0x00000442      0x23d pwm.o
- .debug_abbrev  0x0000067f      0x12a uart.o
- .debug_abbrev  0x000007a9      0x1e9 uart_buffer.o
- .debug_abbrev  0x00000992      0x178 ui.o
- .debug_abbrev  0x00000b0a       0x14 c:/program files/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega2\libgcc.a(_udivmodsi4.o)
- .debug_abbrev  0x00000b1e       0x14 c:/program files/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega2\libgcc.a(_exit.o)
- .debug_abbrev  0x00000b32       0x14 c:/program files/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega2\libgcc.a(_copy_data.o)
- .debug_abbrev  0x00000b46       0x14 c:/program files/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega2\libgcc.a(_clear_bss.o)
+ .debug_abbrev  0x00000442      0x243 pwm.o
+ .debug_abbrev  0x00000685      0x12a uart.o
+ .debug_abbrev  0x000007af      0x1e9 uart_buffer.o
+ .debug_abbrev  0x00000998      0x178 ui.o
+ .debug_abbrev  0x00000b10       0x14 c:/program files/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega2\libgcc.a(_udivmodsi4.o)
+ .debug_abbrev  0x00000b24       0x14 c:/program files/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega2\libgcc.a(_exit.o)
+ .debug_abbrev  0x00000b38       0x14 c:/program files/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega2\libgcc.a(_copy_data.o)
+ .debug_abbrev  0x00000b4c       0x14 c:/program files/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega2\libgcc.a(_clear_bss.o)
 
-.debug_line     0x00000000     0x1219
+.debug_line     0x00000000     0x1252
  *(.debug_line)
  .debug_line    0x00000000      0x183 ac.o
  .debug_line    0x00000183      0x1cd adc.o
  .debug_line    0x00000350      0x181 dac.o
  .debug_line    0x000004d1      0x21e Neurotrigger2.o
- .debug_line    0x000006ef      0x223 pwm.o
- .debug_line    0x00000912      0x2a2 uart.o
- .debug_line    0x00000bb4      0x22d uart_buffer.o
- .debug_line    0x00000de1      0x1e9 ui.o
- .debug_line    0x00000fca       0xa8 c:/program files/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega2\libgcc.a(_udivmodsi4.o)
- .debug_line    0x00001072       0x88 c:/program files/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega2\libgcc.a(_exit.o)
- .debug_line    0x000010fa       0x91 c:/program files/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega2\libgcc.a(_copy_data.o)
- .debug_line    0x0000118b       0x8e c:/program files/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega2\libgcc.a(_clear_bss.o)
+ .debug_line    0x000006ef      0x25c pwm.o
+ .debug_line    0x0000094b      0x2a2 uart.o
+ .debug_line    0x00000bed      0x22d uart_buffer.o
+ .debug_line    0x00000e1a      0x1e9 ui.o
+ .debug_line    0x00001003       0xa8 c:/program files/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega2\libgcc.a(_udivmodsi4.o)
+ .debug_line    0x000010ab       0x88 c:/program files/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega2\libgcc.a(_exit.o)
+ .debug_line    0x00001133       0x91 c:/program files/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega2\libgcc.a(_copy_data.o)
+ .debug_line    0x000011c4       0x8e c:/program files/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega2\libgcc.a(_clear_bss.o)
 
-.debug_frame    0x00000000      0x684
+.debug_frame    0x00000000      0x6d4
  *(.debug_frame)
  .debug_frame   0x00000000       0x64 ac.o
  .debug_frame   0x00000064       0xc4 adc.o
  .debug_frame   0x00000128       0x84 dac.o
  .debug_frame   0x000001ac       0x24 Neurotrigger2.o
- .debug_frame   0x000001d0      0x158 pwm.o
- .debug_frame   0x00000328      0x160 uart.o
- .debug_frame   0x00000488      0x12c uart_buffer.o
- .debug_frame   0x000005b4       0xd0 ui.o
+ .debug_frame   0x000001d0      0x1a8 pwm.o
+ .debug_frame   0x00000378      0x160 uart.o
+ .debug_frame   0x000004d8      0x12c uart_buffer.o
+ .debug_frame   0x00000604       0xd0 ui.o
 
-.debug_str      0x00000000      0xc57
+.debug_str      0x00000000      0xcc0
  *(.debug_str)
  .debug_str     0x00000000       0xff ac.o
                                 0x157 (size before relaxing)
@@ -626,25 +633,25 @@ LOAD c:/program files/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/av
                                 0x276 (size before relaxing)
  .debug_str     0x0000048e      0x373 Neurotrigger2.o
                                 0x57c (size before relaxing)
- .debug_str     0x00000801      0x17e pwm.o
-                                0x59d (size before relaxing)
- .debug_str     0x0000097f       0xfa uart.o
+ .debug_str     0x00000801      0x1e7 pwm.o
+                                0x60b (size before relaxing)
+ .debug_str     0x000009e8       0xfa uart.o
                                 0x2de (size before relaxing)
- .debug_str     0x00000a79      0x118 uart_buffer.o
+ .debug_str     0x00000ae2      0x118 uart_buffer.o
                                 0x23b (size before relaxing)
- .debug_str     0x00000b91       0xc6 ui.o
+ .debug_str     0x00000bfa       0xc6 ui.o
                                 0x4f6 (size before relaxing)
 
-.debug_loc      0x00000000      0xfb4
+.debug_loc      0x00000000     0x1083
  *(.debug_loc)
  .debug_loc     0x00000000       0x5a ac.o
  .debug_loc     0x0000005a      0x246 adc.o
  .debug_loc     0x000002a0       0x66 dac.o
  .debug_loc     0x00000306       0x69 Neurotrigger2.o
- .debug_loc     0x0000036f      0x20a pwm.o
- .debug_loc     0x00000579      0x7ed uart.o
- .debug_loc     0x00000d66      0x180 uart_buffer.o
- .debug_loc     0x00000ee6       0xce ui.o
+ .debug_loc     0x0000036f      0x2d9 pwm.o
+ .debug_loc     0x00000648      0x7ed uart.o
+ .debug_loc     0x00000e35      0x180 uart_buffer.o
+ .debug_loc     0x00000fb5       0xce ui.o
 
 .debug_macinfo
  *(.debug_macinfo)
