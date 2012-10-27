@@ -57,13 +57,13 @@ int main(void){
 		init_ac();
 
 	//[PWM] 
-		init_pwm();
+		init_pwm(); // and serial trigger
 
 	//[Realtime Loop Timer]
 		//Use PortC's T/C0
 		TCC0.CTRLA = 0x07; //Start the timer; Div1024 operation = 32M/1024 = 31250
 		//TCC0.PER = 31; //992uS per timer period
-		TCC0.PER = 100;
+		TCC0.PER = 61;
 
 	//[PMIC (Interrupt Controller)]
 		PMIC.CTRL = B8(10000111); //enable all three interrupt levels (lowest one with round-robin)
@@ -90,6 +90,8 @@ int main(void){
 			service_switches();
 			service_leds();
 			service_button();
+			service_uart_buffer();
+			
 			if (STATE_Button == BUTTON_PUSHED){
 				if (pwm_mode() == false){
 					//DIODE mode

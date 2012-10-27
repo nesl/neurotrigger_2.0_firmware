@@ -4,6 +4,7 @@
 #include "uart.h"
 #include "uart_buffer.h"
 #include "ui.h" //for debugging
+#include "string.h"
 
 //XMEGA uart DRIVER
 //Configures specified serial port for uart operation using N-8-1 frame
@@ -81,6 +82,12 @@ void uart_send_byte( USART_t* which, unsigned char dataB){
 	which->DATA = dataB;	
 }
 
+//Sends an entire string (blocking)
+void uart_send_string(USART_t* which, char* theString){
+	uint16_t length = (uint16_t)strlen(theString);
+	for (uint16_t i=0; i<length; i++){uart_send_byte(which, theString[i]);}	
+}
+	
 //Most Significant Bit first
 void uart_send_BIN4(USART_t* which, uint8_t lowb){
 	switch(lowb){

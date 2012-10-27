@@ -4,31 +4,28 @@
 #include "uart.h"
 #include "uart_buffer.h"
 #include "ui.h" //for debugging
+#include "string.h"
+#include "pwm.h" //for triggering solenoid
 
 //XMEGA uart DATA BUFFER
 //--Due to the XMEGA architecture, it is not as easy to write a port-agnostic
 //		data buffer, so I implemented in this separate file for now.
 
-//==================================
-//= State and Storage Variables
-//==================================
-
-//TX Queue (outgoing)
-volatile uint8_t uart_buffer[MAX_BUFFER_LEN];
-volatile uint8_t uart_head;
-volatile uint8_t uart_tail;
-
-//RX Queue (incoming)
-volatile uint8_t uart_ibuffer[MAX_IBUFFER_LEN];
-volatile uint8_t uart_ihead;
-volatile uint8_t uart_itail;
+/*
+	Limitations -- 
+		- only works for one hardcoded UART
+		- for performance reasons string format is tailored to ezLCD301 application (CR = ACK on RX, and CR = EXECUTE on TX)	
+*/
+//TODO -- make use of DMA transfers
+//TODO -- support multiple independent UARTS
 
 //WHICH PORT?!
 volatile USART_t* port;
 
+
 //************************************************************************
 //************************************************************************
-//** [PORT SPECIFIC CODE]
+//** [PORT SPECIFIC CODE] -- CURRENTLY TUNED TO UART F1
 //************************************************************************
 //************************************************************************
 
@@ -38,7 +35,9 @@ SIGNAL(USARTE0_DRE_vect){
 }
 
 //INCOMING DATA INTERRUPT
-//	<<NOT IMPLEMENTED YET!!!>>
+SIGNAL(USARTE0_RXC_vect){
+	uart_receive();
+}
 
 //************************************************************************
 //************************************************************************
@@ -46,17 +45,51 @@ SIGNAL(USARTE0_DRE_vect){
 //************************************************************************
 //************************************************************************
 
+//MAKE SURE TO INIT UART FIRST
+void init_uart_buffer(USART_t* which){
+	//Setup UART hardware
+		port = which;
+		
+	//Setup data buffers
+		init_uart_obuffer();
+		init_uart_ibuffer();
+	
+	//Enable Receive and Transmit interrupts
+		uart_rxbuffer_enable();
+		uart_txbuffer_enable();		
+}
+
+//Enable Receive Complete (high priority) -- so incoming is always handled first
+void uart_rxbuffer_enable(){
+	port->CTRLA = (port->CTRLA | B8(00110000));	//Set the Data Register Empty Interrupt to Medium Priority (timer needs to be higher!)
+}
+
+void uart_rxbuffer_disable(){
+	port->CTRLA = (port->CTRLA & B8(11001111));	//Disable the Data Register Empty Interrupt
+}
+
+//Enable Transmit Ready (med priority) 
+void uart_txbuffer_enable(){
+	port->CTRLA = (port->CTRLA | B8(00000010));	//Set the Data Register Empty Interrupt to Medium Priority (timer needs to be higher!)
+}
+
+void uart_txbuffer_disable(){
+	port->CTRLA = (port->CTRLA & B8(11111100));	//Disable the Data Register Empty Interrupt
+}
+
 //==================================
 //= TRANSMISSION ENGINE (ISR BASED)
 //==================================
 
 //Starts a transmission out of the UART if the UART is ready to receive data
-//and we have data to send. (helper function to the ISR so that we can initiate 
+//and we have data to send. (helper function to the ISR so that we can initiate
 //the first transfer
 void inline uart_transmit(){
+	uint8_t toSend;
 	//keep loading until data register is full or outgoing queue is empty
 	while (((port->STATUS & _BV(5)) == B8(00100000)) && (uart_count() > 0)){
-		port->DATA = uart_dequeue();
+		toSend = uart_dequeue();
+		port->DATA = toSend;
 	}
 
 	//else: wait for the next tx complete to empty out the data register
@@ -64,21 +97,22 @@ void inline uart_transmit(){
 	else uart_txbuffer_disable();
 }
 
-void init_uart_buffer(USART_t* which){
-	//Setup UART hardware
-		port = which;
 
-	//Setup data buffers
-		init_uart_obuffer();
-		//init_uart_ibuffer(); //not implemented yet!
-}
+//==================================
+//= RECEPTION ENGINE (ISR BASED)
+//==================================
 
-void uart_txbuffer_enable(){
-	port->CTRLA = (port->CTRLA | B8(00000010));	//Set the Data Register Empty Interrupt to Medium Priority (timer needs to be higher!)
-}
-
-void uart_txbuffer_disable(){
-	port->CTRLA = (port->CTRLA & B8(11111100));	//Disable the Data Register Empty Interrupt
+//Starts a transmission out of the UART if the UART is ready to receive data
+//and we have data to send. (helper function to the ISR so that we can initiate
+//the first transfer
+void inline uart_receive(){
+	uint8_t incomingByte;
+	//keep receiving until data register is empty or incoming queue is full
+	while (((port->STATUS & _BV(7)) == B8(10000000)) && (uart_icount() < MAX_IBUFFER_LEN)){
+		incomingByte = port->DATA;
+		//uart_send_byte(&udata, incomingByte); //xxx			
+		uart_ienqueue(incomingByte);		
+	}	
 }
 
 
@@ -103,6 +137,12 @@ inline uint8_t uart_count(void){
 	}
 }
 
+///Enqueue a string into the outgoing serial queue. Adds CR terminator to string.
+inline void uart_enqueue_string(char* string_in){
+	uint16_t length = (uint16_t)strlen(string_in);
+	for (uint16_t i=0; i<length; i++){uart_enqueue((uint8_t)string_in[i]);}	
+}
+
 ///Enqueue date into the outgoing serial queue. This data is sent via USB to the PC's first virtual Comm Port associated with the EEICM. 
 /**This is the queue used to send data back to the command and control GUI. The #define UART_DEBUG can be used to disable normal serial activity through this queue
 	The blue LED is used in this routine to signal buffer overflow, which, due to the real-time scheduled nature of the EEICM firmware architecture, should not happen.
@@ -114,7 +154,7 @@ inline void uart_enqueue(uint8_t datain){
 	if (uart_head >= MAX_BUFFER_LEN){
 		uart_head = 0;
 	}
-	uart_transmit(); //start the transmission process.
+	uart_transmit(); //xxx //start the transmission process.
 #endif
 }
 
@@ -169,6 +209,21 @@ inline uint8_t uart_idequeue(void){
 	}
 	return uart_ibuffer[oldtail];
 }
+
+inline void uart_print_ibuffer(){
+	uart_send_byte(&udata, 13);
+	//uart_send_byte(&udata, 13);
+	uart_send_byte(&udata, "-");
+	uart_send_HEX8(&udata, uart_ihead);
+	uart_send_HEX8(&udata, uart_itail);
+	uart_send_byte(&udata, ":");
+	for (uint8_t i=0; i<uart_icount(); i++){uart_send_byte(&udata, uart_ibuffer[i]);}
+}
+
+inline void service_uart_buffer(){
+	if (uart_icount() > 0) {pwm_hunt_target();}
+}
+
 
 /** @} */
 //****************************************************

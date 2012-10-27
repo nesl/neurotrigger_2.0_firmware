@@ -30,7 +30,9 @@ uint8_t STATE_Pwm_Timeout = TIMEOUT;
 
 //Initialize the PWM module
 void init_pwm(){
-	//no init needed. We initialize when the mode is activated.
+	//no init needed for pwm functions. We initialize when the mode is activated.
+	//but triggering does
+	trigger_target = TRIGGER_TARGET;
 }
 
 void pwm_enable(){
@@ -270,7 +272,6 @@ void pwm_state(uint8_t next_code){
 	}	
 }
 
-
 //Mainline Loop PWM Service Routine -- use to manage output pulse
 //...and trigger states
 //---must run only once per 2ms looptime
@@ -299,4 +300,38 @@ void service_pwm(void){
 	default:
 		PORTA.OUTCLR = B8(10000000); //PA7 output low
 	}//switch
+}
+
+
+
+//#############################################################
+//## SERIAL TRIGGERING FUNCTIONS
+//#############################################################
+
+inline void build_dut(uint8_t start_index){
+	for(uint8_t i=0; i<TARGET_LENGTH; i++){
+	if (start_index+i >= MAX_IBUFFER_LEN){trigger_compare[i] = uart_ibuffer[start_index+i-MAX_IBUFFER_LEN];}
+else {trigger_compare[i] = uart_ibuffer[start_index+i];}
+	}	
+}
+
+inline uint8_t array_compare(uint8_t* arr1, uint8_t* arr2){
+	uint8_t equal = true;
+	for(uint8_t i=0; i<TARGET_LENGTH; i++) { if (arr1[i] != arr2[i]){equal = false;} }
+	return equal;
+}
+
+inline void pwm_hunt_target(){
+	uint8_t how_many = uart_icount();
+	uint8_t current_index = uart_itail;
+	if (how_many < TARGET_LENGTH){return;} //abort if not enough data received
+	for (uint8_t i=0; i<=(how_many-TARGET_LENGTH); i++){
+		if (current_index >= MAX_IBUFFER_LEN){current_index = 0;}
+		build_dut(current_index);
+		if (array_compare(trigger_target, trigger_compare) == true){
+			pwm_pulse(); //fire off the solenoid
+			init_uart_ibuffer(); //flush buffer to prevent retriggering
+		}
+		current_index++;
+	}
 }

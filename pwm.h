@@ -1,6 +1,13 @@
 #ifndef __pwm_h
 #define __pwm_h
 
+	//SERIAL TRIGGERING
+		#define TRIGGER_TARGET "level_restart"
+		#define TARGET_LENGTH 13
+		uint8_t* trigger_target;
+		uint8_t trigger_compare[TARGET_LENGTH];
+		void pwm_hunt_target();
+
 	//STATES
 		#define POSITIVE_PULSE	87
 		#define NEGATIVE_PULSE	88
@@ -19,7 +26,10 @@
 		#define SAW_ACC 137
 
 	//DEFINITIONS
-		#define PWM_PULSE_DURATION 10
+		//Dialed for 0.3uL per pulse delivery
+		//2 = 0.3uL (via x10 measurement)
+		//25 = 7uL
+		#define PWM_PULSE_DURATION 20
 	
 	//GLOBAL STATE
 		#define PWM_OUTPUT_LOW 78
